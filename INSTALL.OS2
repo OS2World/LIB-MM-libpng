@@ -1,0 +1,6 @@
+Copy .dll file to some directory in your LIBPATH.
+Copy .a and .lib files to EMX library directory.
+Copy .h files to EMX include directory.
+Use -lpng_s for static linking.
+Use -lpng -Zmt -Zcrtdll for dynamic linking. (if you omit -Zmt or -Zcrtdll,
+it still works, but the library uses a different heap than your program)
