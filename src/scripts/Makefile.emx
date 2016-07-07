@@ -23,8 +23,8 @@ THREADING=-Zmt
 WARNMORE=-Wwrite-strings -Wpointer-arith -Wshadow \
 	-Wmissing-declarations -Wtraditional -Wcast-align \
 	-Wstrict-prototypes -Wmissing-prototypes #-Wconversion
-CFLAGS=$(ZLIBINC) -W -Wall -O3 -funroll-loops -malign-loops=2 \
-	-malign-functions=2 $(THREADING) #$(WARNMORE)
+CFLAGS=$(ZLIBINC) -W -Wall -O3 -fomit-frame-pointer -funroll-loops -malign-loops=2 \
+	-malign-functions=2 -march=i386 -mcpu=pentium $(THREADING) #$(WARNMORE)
 LDFLAGS=$(ZLIBLIB) -lz $(THREADING) -Zcrtdll
 AR=ar
 EMXOMF=emxomf
@@ -68,32 +68,34 @@ test: pngtest.exe
 	.\pngtest.exe
 
 clean:
-	rm -f *.o *.obj *.a *.lib *.dll *.exe pngout.png
+	rm -f *.o *.obj *.a *.lib *.dll *.exe pngout.png pnglibconf.h
 
-# DO NOT DELETE THIS LINE -- make depend depends on it.
+pnglibconf.h: scripts/pnglibconf.h.prebuilt
+	cp $< $@
 
-png.o png.pic.o: png.h pngconf.h pngpriv.h
-pngerror.o pngerror.pic.o: png.h pngconf.h pngpriv.h
-pngrio.o pngrio.pic.o: png.h pngconf.h pngpriv.h
-pngwio.o pngwio.pic.o: png.h pngconf.h pngpriv.h
-pngmem.o pngmem.pic.o: png.h pngconf.h pngpriv.h
-pngset.o pngset.pic.o: png.h pngconf.h pngpriv.h
-pngget.o pngget.pic.o: png.h pngconf.h pngpriv.h
-pngread.o pngread.pic.o: png.h pngconf.h pngpriv.h
-pngrtran.o pngrtran.pic.o: png.h pngconf.h pngpriv.h
-pngrutil.o pngrutil.pic.o: png.h pngconf.h pngpriv.h
-pngtrans.o pngtrans.pic.o: png.h pngconf.h pngpriv.h
-pngwrite.o pngwrite.pic.o: png.h pngconf.h pngpriv.h
-pngwtran.o pngwtran.pic.o: png.h pngconf.h pngpriv.h
-pngwutil.o pngwutil.pic.o: png.h pngconf.h pngpriv.h
-pngpread.o pngpread.pic.o: png.h pngconf.h pngpriv.h
+png.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngerror.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngrio.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngwio.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngmem.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngset.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngget.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngread.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngrtran.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngrutil.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngtrans.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngwrite.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngwtran.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngwutil.o: png.h pnglibconf.h pngconf.h pngpriv.h
+pngpread.o: png.h pnglibconf.h pngconf.h pngpriv.h
 
-pngtest.o: png.h pngconf.h
+pngtest.o: png.h pnglibconf.h pngconf.h
 
 install-png: all test
 	@install -d $(INCDIR)
 	@install -d $(LIBDIR)
 	@install -d $(DLLDIR)
-	install -c png.h pngconf.h pnglibconf.h $(INCDIR)
+	install -c png.h pngconf.h $(INCDIR)
+	install -c scripts/pnglibconf.h.prebuilt $(INCDIR)/pnglibconf.h
 	install -c $(PNGLIB_A) $(PNGLIB_LIB) $(SHAREDLIBIMP_A) $(SHAREDLIBIMP_LIB) $(LIBDIR)
 	install -c $(SHAREDLIB) $(DLLDIR)
